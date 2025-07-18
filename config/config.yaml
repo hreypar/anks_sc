@@ -1,0 +1,96 @@
+# this file contains everything to configure the workflow on a global scale.
+# In case of sample based data, it should be complemented by a samples file that contains
+# one row per sample that can easily be parsed via pandas.
+
+# Path to file containing run-level metadata
+# Usually it is a table from SRA Run Selector
+sra_runtable:
+    filename: "config/SraRunTable.gex.csv"
+    runid: "Run"
+    sampid: "BioSample"
+    layout: "LibraryLayout"
+
+# Samples metadata file
+samples_metadata:
+    filename: "config/pbmc_anks_metadata.csv"
+    sampid_meta: "sra_biosample"
+
+# directory for temps
+#
+tmpdir: "$TMPDIR"
+
+# get fastqs rule
+#
+sra_to_fastq_threads: 8
+
+# reference genome
+#
+star_index: "resources/STAR_GRCh38.d1.vd1_gencode.v38"
+
+# You should parametrize fastq suffix this to match reads per spot
+# 10x protocols
+#
+barcode_mate:
+    v1.1: 'R2'
+    v2: 'R1'
+    v3: 'R1'
+
+# this logic is cool because it is based on each sample,
+# not assuming all samples in a dataset have the same chem, etc
+# thanks, Matthew!
+#
+# STARsolo alignment
+align_multi_starsolo:
+    _default:
+        runDirPerm: "All_RWX"
+        soloType: "CB_UMI_Simple"
+        outSAMunmapped: "Within"
+        soloFeatures: "Gene SJ Velocyto"
+        outSAMattributes: "NH HI AS NM nM MD CR CY UR UY CB UB GX GN sS sQ sM"
+        outSAMtype: "BAM SortedByCoordinate"
+        clipAdapterType: "CellRanger4"
+        outFilterScoreMin: 30
+        soloCBmatchWLtype: "1MM_multi_Nbase_pseudocounts"
+        soloUMIfiltering: "MultiGeneUMI_CR"
+        soloUMIdedup: "1MM_CR"
+        limitOutSJcollapsed: 5000000
+        outFilterMultimapScoreRange: 5
+        outFilterMultimapNmax: 500
+        limitBAMsortRAM: 48000000000
+        soloCellFilter: "EmptyDrops_CR"
+    chemistry:
+        v1.1:
+            soloCBwhitelist: "resources/whitelist/737K-august-2016.txt"
+            soloBarcodeReadLength: 0
+            soloCBstart: 1
+            soloCBlen: 16
+            soloUMIstart: 17
+            soloUMIlen: 10
+            soloStrand: "Reverse"
+        v2:
+            soloCBwhitelist: "resources/whitelist/737K-august-2016.txt"
+            soloBarcodeReadLength: 0
+            soloCBstart: 1
+            soloCBlen: 16
+            soloUMIstart: 17
+            soloUMIlen: 10
+        v3:
+            soloCBwhitelist: "resources/whitelist/3M-february-2018.txt"
+            soloBarcodeReadLength: 0
+            soloCBstart: 1
+            soloCBlen: 16
+            soloUMIstart: 17
+            soloUMIlen: 12
+
+# Stellarscope
+stellarscope:
+        retro_gtf: "resources/retro.hg38.v1.gtf"
+        retro_rds: "resources/retro.hg38.v1.rds"
+        gtype_rds: "resources/gencode.v38/metadata.gid_gtype.rds"
+
+annotate_celltypes_azimuth:
+        filter_threshold: 0.8
+
+
+
+
