@@ -1,0 +1,215 @@
+__default__:
+    args: "--parsable "
+    partition: "defq"
+    ntasks: 1
+    cpus-per-task: 24
+    output: "logs/{rule}.{wildcards}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards}"
+    exclusive: ""
+align_multi_starsolo:
+    cpus-per-task: 20
+    output: "logs/{rule}.{wildcards.sampid}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.sampid}"
+align_default_starsolo:
+    cpus-per-task: 20
+    output: "logs/{rule}.{wildcards.sampid}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.sampid}"
+align_starsolo_test:
+    cpus-per-task: 12
+    output: "logs/{rule}.{wildcards.sampid}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.sampid}"
+
+extract_fastq:
+    cpus-per-task: 12
+    output: "logs/extract.{wildcards.dataset}.{wildcards.sampid}.slurm-%j.out"
+    job-name: "sm.extract.{wildcards.dataset}.{wildcards.sampid}"
+dump_fastq_sra:
+    cpus-per-task: 8
+    output: "logs/{rule}.{wildcards.acc}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.acc}"
+
+cell_qc:
+    cpus-per-task: 1
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}"    
+annotate_celltypes_azimuth:
+    cpus-per-task: 12
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}"
+canonical_idents:
+    cpus-per-task: 4
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}"       
+stellarscope_cellsort:
+    cpus-per-task: 12
+    output: "logs/cellsort.{wildcards.dataset}.{wildcards.sampid}.slurm-%j.out"
+    job-name: "sm.cellsort.{wildcards.dataset}.{wildcards.sampid}"
+stellarscope_load:
+    cpus-per-task: 1
+    output: "logs/st_load.{wildcards.dataset}.{wildcards.sampid}.slurm-%j.out"
+    job-name: "sm.st_load.{wildcards.dataset}.{wildcards.sampid}"
+stellarscope_resume:
+    cpus-per-task: 24
+    output: "logs/st_resume.{wildcards.dataset}.{wildcards.sampid}.{wildcards.pmode}.slurm-%j..out"
+    job-name: "sm.st_resume.{wildcards.dataset}.{wildcards.sampid}.{wildcards.pmode}"
+stellarscope_celltype:
+    cpus-per-task: 12
+    output: "logs/st_resume.{wildcards.dataset}.{wildcards.sampid}.celltype.{wildcards.ident}.slurm-%j.out"
+    job-name: "sm.st_resume.{wildcards.dataset}.{wildcards.sampid}.celltype.{wildcards.ident}"
+stellarscope_resume_random_celltype:    
+    cpus-per-task: 12
+    output: "logs/st_resume.{wildcards.dataset}.{wildcards.sampid}.celltype.random{wildcards.rep}.slurm-%j.out"
+    job-name: "sm.st_resume.{wildcards.dataset}.{wildcards.sampid}.celltype.random{wildcards.rep}"
+create_seurat_obj:
+    cpus-per-task: 1
+    output: "logs/create_seurat_obj.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.slurm-%j.out"
+    job-name: "sm.create_seurat_obj.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}"
+create_corrected_obj:
+    cpus-per-task: 1
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}"
+correct_te_counts:
+    cpus-per-task: 1
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}"
+map_azimuth:
+    cpus-per-task: 1
+    output: "logs/map_azimuth.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.slurm-%j.out"
+    job-name: "sm.map_azimuth.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}"
+aggregate_features:
+    cpus-per-task: 1
+    output: "logs/aggregate_features.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.slurm-%j.out"
+    job-name: "sm.aggregate_features.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}"
+sctransform:
+    cpus-per-task: 12
+    output: "logs/sctransform.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.slurm-%j.out"
+    job-name: "sm.sctransform.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}"
+doubletfinder:
+    cpus-per-task: 8
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}"
+scrublet:
+    cpus-per-task: 8
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}"
+render_notebook_01:
+    cpus-per-task: 4
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}"
+render_notebook_02:
+    cpus-per-task: 4
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}"
+render_notebook_03:
+    cpus-per-task: 4
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}"
+render_notebook_04:
+    cpus-per-task: 4
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}"
+render_notebook_05:
+    cpus-per-task: 4
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}"
+cluster_varset:
+    cpus-per-task: 8
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.{wildcards.varset}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.{wildcards.varset}"
+render_notebook_06:
+    cpus-per-task: 4
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}"
+render_notebook_07:
+    cpus-per-task: 4
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}"
+render_notebook_08:
+    cpus-per-task: 4
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}"
+render_notebook_08a:
+    cpus-per-task: 4
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}"
+find_all_markers:
+    cpus-per-task: 8
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.{wildcards.idents}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.{wildcards.idents}"
+find_all_markers_fam:
+    cpus-per-task: 12
+    output: "logs/{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.{wildcards.idents}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.dataset}.{wildcards.sampid}.{wildcards.exptag}.{wildcards.idents}"
+integrate_tissue:
+    cpus-per-task: 6
+    output: "logs/{rule}.gtex.{wildcards.tissue}.slurm-%j.out"
+    job-name: "sm.{rule}.gtex.{wildcards.tissue}"
+render_notebook_G03:
+    cpus-per-task: 12
+    output: "logs/{rule}.{wildcards.tissue}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.tissue}"
+find_all_markers_gtex:
+    cpus-per-task: 6
+    output: "logs/{rule}.{wildcards.tissue}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.tissue}"
+render_notebook_G04:
+    cpus-per-task: 4
+    output: "logs/{rule}.{wildcards.tissue}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.tissue}"
+render_notebook_G06:
+    cpus-per-task: 3
+    output: "logs/{rule}.{wildcards.tissue}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.tissue}"
+render_notebook_C01:
+    cpus-per-task: 4
+    output: "logs/{rule}.compare01.3Pv5P.slurm-%j.out"
+    job-name: "sm.{rule}.compare01.3Pv5P"
+render_notebook_C02:
+    cpus-per-task: 4
+    output: "logs/{rule}.compare01.3Pv5P.slurm-%j.out"
+    job-name: "sm.{rule}.compare01.3Pv5P"
+render_notebook_C03:
+    cpus-per-task: 4
+    output: "logs/{rule}.compare01.3Pv5P.slurm-%j.out"
+    job-name: "sm.{rule}.compare01.3Pv5P"
+updated_bam_celltype_color:
+    cpus-per-task: 4
+    output: "logs/{rule}.{wildcards.sampid}.celltype.{wildcards.ident}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.sampid}.celltype.{wildcards.ident}"
+updated_other_bam:
+    cpus-per-task: 8
+    output: "logs/{rule}.{wildcards.sampid}.celltype.{wildcards.ident}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.sampid}.celltype.{wildcards.ident}"
+merge_bam_te_other:
+    cpus-per-task: 8
+    output: "logs/{rule}.{wildcards.sampid}.celltype.{wildcards.ident}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.sampid}.celltype.{wildcards.ident}"
+bam_to_cram:
+    cpus-per-task: 8
+    output: "logs/{rule}.slurm-%j.out"
+    job-name: "sm.{rule}"
+bigwig_celltype:
+    cpus-per-task: 4
+    output: "logs/{rule}.{wildcards.sampid}.celltype.{wildcards.ident}.{wildcards.ctu}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.sampid}.celltype.{wildcards.ident}.{wildcards.ctu}"
+
+sort_filtered_bam:
+    cpus-per-task: 8
+    output: "logs/{rule}.{wildcards.sampid}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.sampid}"
+
+scTE:
+    cpus-per-task: 4
+    output: "logs/{rule}.{wildcards.sampid}.{wildcards.idxmode}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.sampid}.{wildcards.idxmode}"    
+
+
+soloTE:
+    cpus-per-task: 4
+    output: "logs/{rule}.{wildcards.sampid}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.sampid}"   
+
+count_bam_regions:
+    cpus-per-task: 1
+    output: "logs/{rule}.{wildcards.sampid}.slurm-%j.out"
+    job-name: "sm.{rule}.{wildcards.sampid}"

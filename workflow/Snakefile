@@ -1,0 +1,61 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+configfile: "config/config.yaml"
+
+include: "rules/common.smk"
+include: "rules/download_sra.smk"
+include: "rules/align_multi_starsolo.smk"
+#include: "rules/canonicalQC.smk"
+#include: "rules/stellarscope.smk"
+#include: "rules/postprocess.smk"
+#include: "rules/notebooks.smk"
+# include: "rules/feature_barcode.smk"
+
+
+#localrules: allalign
+rule allalign:
+    input:
+        expand('results/align_multi_starsolo/{s}/Aligned.sortedByCoord.out.bam',
+            s = samples.index
+        )
+
+#localrules: allstellar        
+#rule allstellar:
+#    input:
+#        expand(rules.stellarscope_correction.output[0],
+#            samp = sample_df.index,
+#            basetag = ['pseudobulk', 'celltype.l1']
+#        )
+#
+#localrules: testRenv
+#rule testRenv:
+#    output: 'results/renv.ok'
+#    conda: 'envs/R.yaml'
+#    threads: 1
+#    script: 'scripts/testRenv.R'
+#
+# 
+# 
+# rule selected:
+#     input:
+#         expand('results/pbmc3p/analysis/{s}/{e}.sct.h5seurat',
+#             s = sample_df[sample_df['dataset'] == 'pbmc3p'].index,
+#             e = ['pseudobulk', 'celltype.l1', 'celltype', 'celltype.l3', 'individual'],
+#         ),
+#         expand('results/pbmc5p/analysis/{s}/{e}.sct.h5seurat',
+#             s = sample_df[sample_df['dataset'] == 'pbmc5p'].index,
+#             e = ['pseudobulk', 'celltype.l1', 'celltype', 'celltype.l3', 'individual'],
+#         )
+# 
+# 
+# rule selected_test:
+#     input:
+#         expand('results/pbmc3p/analysis/{s}/{e}.sct.h5seurat',
+#             s = ['pbmc3p.20k', 'pbmc3p.500'],
+#             e = ['pseudobulk', 'celltype.l1', 'celltype', 'celltype.l3'],
+#         ),
+#         expand('results/pbmc5p/analysis/{s}/{e}.sct.h5seurat',
+#             s = ['pbmc5p.20k', 'pbmc5p.1k'],
+#             e = ['pseudobulk', 'celltype.l1', 'celltype', 'celltype.l3'],
+#         )

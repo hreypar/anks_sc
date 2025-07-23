@@ -1,0 +1,22 @@
+cluster:
+    sbatch {cluster.args} 
+        --partition={cluster.partition}
+        --ntasks={cluster.ntasks}
+        --cpus-per-task={cluster.cpus-per-task}
+        --output={cluster.output}
+        --job-name={cluster.job-name}
+        {cluster.exclusive}
+config: tmpdir="$TMPDIR"
+cluster-status: "slurm_status.py"
+cluster-config: "cluster.yaml"
+jobs: 10000
+local-cores: 2
+max-jobs-per-second: 1
+max-status-checks-per-second: 10
+rerun-incomplete: true
+keep-going: true
+use-conda: true
+conda-frontend: mamba
+printshellcmds: true
+reason: true
+config: reticulate_conda_bin="~/miniconda3/bin/conda"

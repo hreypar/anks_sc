@@ -1,0 +1,10 @@
+name: sra_data
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - sra-tools
+  - parallel-fastq-dump
+  - pigz
+
