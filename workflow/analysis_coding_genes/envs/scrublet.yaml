@@ -1,0 +1,12 @@
+name: scrublet
+channels:
+    - bioconda
+    - conda-forge
+    - defaults
+dependencies:
+    - scipy
+    - numpy
+    - pandas
+    - matplotlib
+    - scrublet
+
