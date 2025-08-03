@@ -38,7 +38,7 @@ c("PBMC-01-1-GEX-S1_SAMN25241888", "PBMC-01-2-GEX-S1_SAMN25241889", "PBMC-01-3-G
 
 # Define directories
 base_dir <- "results/align_multi_starsolo"
-output_dir <- "results/canonicalQC"
+output_dir <- "results/b_canonicalQC"
 barcodes_dir <- "config/barcodes_raw"
 
 
@@ -122,9 +122,12 @@ process_sample <- function(sample, base_dir, output_dir, barcodes_dir,
 for (sample in samples) {
   process_sample(sample, base_dir, output_dir, barcodes_dir,
                  emptyDrops.niter = 10000,  # Adjust as needed
-                 emptyDrops.fdr.th = 0.001, # Adjust as needed
+                 emptyDrops.fdr.th = 0.01, # Adjust as needed
                  min.upper.percent.mt = 8) # Adjust as needed
 } 
 
 
 
+########################################################
+#########################################################
+#########################################################
