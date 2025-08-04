@@ -44,7 +44,7 @@ barcodes_dir <- "config/barcodes_raw"
 
 # Function to process each sample
 process_sample <- function(sample, base_dir, output_dir, barcodes_dir,
-                           emptyDrops.niter=100000, emptyDrops.fdr.th = 1e-3,
+#                           emptyDrops.niter=100000, emptyDrops.fdr.th = 1e-3,
                            min.upper.percent.mt = 5) {
  
    message(paste0("Processing sample: ", sample))
@@ -54,7 +54,9 @@ process_sample <- function(sample, base_dir, output_dir, barcodes_dir,
   dir.create(sample_output_dir, recursive = TRUE, showWarnings = FALSE)
   
   # Read input files  
-  sobj <- Seurat::ReadSTARsolo(data.dir = file.path(base_dir, sample, "Solo.out/Gene/raw"))
+#  sobj <- Seurat::ReadSTARsolo(data.dir = file.path(base_dir, sample, "Solo.out/Gene/raw"))
+  sobj <- Seurat::ReadSTARsolo(data.dir = file.path(base_dir, sample, "Solo.out/Gene/filtered"))
+  
   sobj <- Seurat::CreateSeuratObject(counts = sobj, project = sample)
   
   # genetic Doublet Removal (only for PBMC samples)
@@ -65,16 +67,16 @@ process_sample <- function(sample, base_dir, output_dir, barcodes_dir,
     sobj <- sobj[, keep_barcodes]
   }
   
-  # empty Drops Removal using emptyDrops
-  ed.out <- DropletUtils::emptyDrops(
-    sobj@assays$RNA@layers$counts,
-    niters = emptyDrops.niter
-    )
-  
-  colnames(ed.out) <- str_c('edrop.', colnames(ed.out))
-  sobj@meta.data <- sobj@meta.data %>% cbind(ed.out)
-  
-  sobj <- subset(sobj, subset = !(edrop.FDR < emptyDrops.fdr.th & edrop.Limited))
+  # # empty Drops Removal using emptyDrops
+  # ed.out <- DropletUtils::emptyDrops(
+  #   sobj@assays$RNA@layers$counts,
+  #   niters = emptyDrops.niter
+  #   )
+  # 
+  # colnames(ed.out) <- str_c('edrop.', colnames(ed.out))
+  # sobj@meta.data <- sobj@meta.data %>% cbind(ed.out)
+  # 
+  # sobj <- subset(sobj, subset = !(edrop.FDR < emptyDrops.fdr.th & edrop.Limited))
   
   # mitochondrial filtering and outlier detection using scater
   sobj[["percent.mt"]] <- Seurat::PercentageFeatureSet(sobj, pattern = "^MT-")
@@ -103,7 +105,7 @@ process_sample <- function(sample, base_dir, output_dir, barcodes_dir,
   # save as text-based sparse matrix for Scrublet
   mtx_filtered_path <- file.path(sample_output_dir, "matrix.mtx")
   barcodes_filtered_path <- file.path(sample_output_dir, "barcodes.tsv")
-  features_filtered_path <- file.path(sample_output_dir, "genes.tsv")
+  features_filtered_path <- file.path(sample_output_dir, "features.tsv")
   
   Matrix::writeMM(sobj@assays$RNA$counts, file = mtx_filtered_path)
   write.table(Seurat::Cells(sobj), file = barcodes_filtered_path, quote = FALSE, row.names = FALSE, col.names = FALSE)
@@ -121,13 +123,7 @@ process_sample <- function(sample, base_dir, output_dir, barcodes_dir,
 # run them all 
 for (sample in samples) {
   process_sample(sample, base_dir, output_dir, barcodes_dir,
-                 emptyDrops.niter = 10000,  # Adjust as needed
-                 emptyDrops.fdr.th = 0.01, # Adjust as needed
-                 min.upper.percent.mt = 8) # Adjust as needed
+#                 emptyDrops.niter = 10000,  
+#                 emptyDrops.fdr.th = 0.01,
+                 min.upper.percent.mt = 8)
 } 
-
-
-
-########################################################
-#########################################################
-#########################################################
