@@ -129,9 +129,11 @@ scrublet_filter <- function(
   
   # Write summary
   summary_file <- file.path(output_dir, "filtering_summary.txt")
+  # Fixed the separator line
+  separator <- paste(rep("=", nchar(sample_name) + 30), collapse = "")
   summary_lines <- c(
     sprintf("Scrublet Filtering Summary for %s", sample_name),
-    sprintf("=" %.% rep("", nchar(sample_name) + 30)),
+    separator,
     sprintf("Date: %s", Sys.Date()),
     sprintf(""),
     sprintf("Original cells: %d", n_original),
