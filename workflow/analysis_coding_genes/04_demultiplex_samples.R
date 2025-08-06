@@ -17,17 +17,13 @@ demultiplex_and_organize <- function(
     require(ggplot2)
   })
   
-  # Read sample metadata
   sample_metadata <- read.csv(metadata_file, stringsAsFactors = FALSE)
   cat(sprintf("Loaded metadata for %d samples\n", nrow(sample_metadata)))
   
-  # Create output directory
   dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
   
-  # Initialize summary
   summary_list <- list()
   
-  # Process each sample
   for (i in 1:nrow(sample_metadata)) {
     sample_info <- sample_metadata[i, ]
     sample_name <- sample_info$sample
@@ -35,7 +31,6 @@ demultiplex_and_organize <- function(
     
     cat(sprintf("\n=== Processing %s (type: %s) ===\n", sample_name, sample_type))
     
-    # Check if final filtered data exists
     input_dir <- file.path(base_dir, sample_name, "final")
     if (!dir.exists(input_dir)) {
       cat(sprintf("Warning: No final data found for %s, skipping...\n", sample_name))
@@ -68,10 +63,8 @@ demultiplex_and_organize <- function(
     }
   }
   
-  # Create summary report and plots
   create_summary_report(summary_list, output_dir)
   
-  cat("\n=== Demultiplexing complete! ===\n")
   cat(sprintf("Results saved to: %s\n", output_dir))
 }
 
@@ -84,7 +77,6 @@ process_pooled_sample <- function(
 ) {
   cat("Processing pooled sample...\n")
   
-  # Read barcode metadata
   metadata_file <- file.path(barcodes_metadata_dir, 
                              sprintf("barcodes_metadata.%s.csv", sample_name))
   
@@ -95,7 +87,6 @@ process_pooled_sample <- function(
   barcode_metadata <- read.csv(metadata_file, stringsAsFactors = FALSE)
   cat(sprintf("  Loaded metadata for %d barcodes\n", nrow(barcode_metadata)))
   
-  # Load matrix data
   cat("  Loading matrix data...\n")
   counts_mtx <- file.path(input_dir, "matrix.mtx")
   barcodes_tsv <- file.path(input_dir, "barcodes.tsv")
@@ -111,13 +102,12 @@ process_pooled_sample <- function(
   
   cat(sprintf("  Loaded matrix: %d features x %d cells\n", nrow(spmat), ncol(spmat)))
   
-  # Match barcodes
   matched_metadata <- barcode_metadata %>%
     filter(barcode %in% barcodes)
   
   cat(sprintf("  Matched %d barcodes between matrix and metadata\n", nrow(matched_metadata)))
   
-  # Check for unmatched barcodes in matrix
+  # check for unmatched barcodes in matrix
   unmatched_barcodes <- barcodes[!barcodes %in% barcode_metadata$barcode]
   if (length(unmatched_barcodes) > 0) {
     cat(sprintf("  WARNING: %d barcodes in matrix not found in metadata!\n", 
@@ -137,14 +127,11 @@ process_pooled_sample <- function(
                 length(metadata_only_barcodes)))
   }
   
-  # Get unique subjects
   subjects <- unique(matched_metadata$Subject)
   cat(sprintf("  Found %d unique subjects\n", length(subjects)))
   
-  # Initialize summary
   summary_list <- list()
   
-  # Add summary for unmatched barcodes if any
   if (length(unmatched_barcodes) > 0) {
     summary_list[[length(summary_list) + 1]] <- list(
       sample = paste0(sample_name, "_UNMATCHED"),
@@ -156,38 +143,30 @@ process_pooled_sample <- function(
     )
   }
   
-  # Split by subject
   for (subject in subjects) {
     cat(sprintf("\n  Processing subject: %s\n", subject))
     
-    # Get barcodes for this subject
     subject_barcodes <- matched_metadata %>%
       filter(Subject == subject) %>%
       pull(barcode)
     
     cat(sprintf("    %d cells for this subject\n", length(subject_barcodes)))
     
-    # Subset matrix
     subject_mat <- spmat[, subject_barcodes, drop = FALSE]
     
-    # Create output directory for subject
     subject_dir <- file.path(output_dir, subject)
     dir.create(subject_dir, recursive = TRUE, showWarnings = FALSE)
     
-    # Write output files
     cat("    Writing output files...\n")
     
-    # Matrix
     Matrix::writeMM(subject_mat, file = file.path(subject_dir, "matrix.mtx"))
     
-    # Barcodes
     writeLines(colnames(subject_mat), file.path(subject_dir, "barcodes.tsv"))
     
     # Features (same for all subjects)
     write.table(features_df, file = file.path(subject_dir, "features.tsv"),
                 sep = '\t', quote = FALSE, row.names = FALSE, col.names = FALSE)
     
-    # Add metadata file with original pool information
     subject_metadata <- matched_metadata %>%
       filter(Subject == subject) %>%
       mutate(original_pool = sample_name)
@@ -196,7 +175,6 @@ process_pooled_sample <- function(
               file = file.path(subject_dir, "cell_metadata.csv"),
               row.names = FALSE)
     
-    # Summary
     summary_list[[length(summary_list) + 1]] <- list(
       sample = subject,
       original_pool = sample_name,
@@ -213,7 +191,6 @@ process_pooled_sample <- function(
     cat(sprintf("    ✓ Saved to: %s\n", subject_dir))
   }
   
-  # Create reconciliation report
   recon_file <- file.path(output_dir, sprintf("reconciliation_%s.txt", sample_name))
   separator <- paste(rep("=", nchar(sample_name) + 25), collapse = "")
   recon_lines <- c(
@@ -240,13 +217,11 @@ process_pooled_sample <- function(
 create_pool_barplot <- function(matched_metadata, sample_name, final_dir) {
   cat("  Creating cell distribution barplot...\n")
   
-  # Summarize cells per subject
   subject_summary <- matched_metadata %>%
     group_by(Subject, Status) %>%
     summarise(n_cells = n(), .groups = "drop") %>%
     arrange(desc(n_cells))
   
-  # Create barplot
   p <- ggplot(subject_summary, aes(x = reorder(Subject, n_cells), y = n_cells, fill = Status)) +
     geom_bar(stat = "identity") +
     geom_text(aes(label = n_cells), hjust = -0.2) +
@@ -263,7 +238,6 @@ create_pool_barplot <- function(matched_metadata, sample_name, final_dir) {
     ) +
     scale_fill_brewer(palette = "Set2")
   
-  # Save to final directory (which is passed as final_dir parameter)
   plot_file <- file.path(final_dir, "demultiplexing_distribution.pdf")
   ggsave(plot_file, p, width = 8, height = 6)
   cat(sprintf("  Barplot saved to: %s\n", plot_file))
@@ -277,14 +251,11 @@ process_single_sample <- function(
 ) {
   cat("Processing single sample...\n")
   
-  # For single samples, use the sample name as is
   sample_dir <- file.path(output_dir, sample_name)
   dir.create(sample_dir, recursive = TRUE, showWarnings = FALSE)
   
-  # Get absolute paths for symlinks
   input_dir_abs <- normalizePath(input_dir)
   
-  # Files to link/copy
   files <- c("matrix.mtx", "barcodes.tsv", "features.tsv")
   
   for (file in files) {
@@ -304,10 +275,8 @@ process_single_sample <- function(
     }
   }
   
-  # Count cells
   n_cells <- length(readLines(file.path(sample_dir, "barcodes.tsv")))
   
-  # Create metadata file for consistency
   metadata_df <- data.frame(
     sample = sample_name,
     type = "single_sample",
@@ -332,15 +301,12 @@ process_single_sample <- function(
 create_summary_report <- function(summary_list, output_dir) {
   cat("\nCreating summary report...\n")
   
-  # Convert to data frame
   summary_df <- do.call(rbind, lapply(summary_list, as.data.frame))
   
-  # Save detailed summary
   summary_file <- file.path(output_dir, "demultiplexing_summary.tsv")
   write.table(summary_df, file = summary_file, sep = "\t", 
               quote = FALSE, row.names = FALSE)
   
-  # Print summary statistics
   cat("\n=== Summary Statistics ===\n")
   cat(sprintf("Total entries: %d\n", nrow(summary_df)))
   cat(sprintf("  - Demultiplexed subjects: %d\n", 
@@ -353,7 +319,7 @@ create_summary_report <- function(summary_list, output_dir) {
   
   # Check for unmatched barcodes
   if (any(summary_df$type == "unmatched", na.rm = TRUE)) {
-    cat("\n⚠️  WARNING: Some barcodes could not be matched to metadata!\n")
+    cat("\n⚠WARNING: Some barcodes could not be matched to metadata!!!!\n")
     unmatched_summary <- summary_df %>%
       filter(type == "unmatched") %>%
       select(original_pool, n_cells)
@@ -365,7 +331,6 @@ create_summary_report <- function(summary_list, output_dir) {
     cat(paste("  -", unmatched_files, collapse = "\n"), "\n")
   }
   
-  # Summary by pool
   if (any(summary_df$type == "demultiplexed")) {
     cat("\nDemultiplexing summary by pool:\n")
     pool_summary <- summary_df %>%
@@ -396,7 +361,6 @@ create_all_pools_plot <- function(summary_df, output_dir) {
       Subject = sample
     )
   
-  # Create faceted barplot
   p_facet <- ggplot(demux_data, aes(x = reorder(Subject, n_cells), y = n_cells, fill = status)) +
     geom_bar(stat = "identity") +
     geom_text(aes(label = n_cells), hjust = -0.2, size = 3) +
@@ -417,12 +381,10 @@ create_all_pools_plot <- function(summary_df, output_dir) {
     ) +
     scale_fill_brewer(palette = "Set2")
   
-  # Save faceted plot
   facet_file <- file.path(output_dir, "all_pools_distribution.pdf")
   ggsave(facet_file, p_facet, width = 14, height = 10)
   cat(sprintf("Faceted plot saved to: %s\n", facet_file))
   
-  # Create summary barplot by pool
   pool_summary <- demux_data %>%
     group_by(pool_short) %>%
     summarise(
@@ -452,7 +414,6 @@ create_all_pools_plot <- function(summary_df, output_dir) {
   cat(sprintf("Summary plot saved to: %s\n", summary_file))
 }
 
-# Command line interface
 if (sys.nframe() == 0L) {
   suppressPackageStartupMessages({
     require(optparse)
