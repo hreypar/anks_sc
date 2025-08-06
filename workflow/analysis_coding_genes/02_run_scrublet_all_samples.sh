@@ -1,31 +1,27 @@
 #!/bin/bash
 
-# this script assumes
+# this script assumes:
 # the python script is at scripts/run_scrublet.py
 # input files are named matrix.mtx, features.tsv, and barcodes.tsv
 # we have the scrublet conda environment set up
 
-# Run Scrublet on samples after genetic demultiplexing and qc filters
 
-# Exit on error
 set -e
 
-# Script configuration
+# onfig
 PYTHON_SCRIPT="scripts/run_scrublet.py"
 BASE_DIR="results/b_canonicalQC"
 CONDA_ENV="scrublet"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 
-# Main log directory for summary only
 SUMMARY_LOG_DIR="logs/scrublet"
 mkdir -p "$SUMMARY_LOG_DIR"
 SUMMARY_LOG="$SUMMARY_LOG_DIR/summary_${TIMESTAMP}.log"
 
 # Doublet rates after genetic demultiplexing
-PBMC_DOUBLET_RATE=0.03  # Conservative estimate for remaining doublets
+PBMC_DOUBLET_RATE=0.03  # Conservative estimate for remaining doublets (!)
 OTHER_DOUBLET_RATE=0.08
 
-# Function to log messages to summary log
 log_summary() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1" | tee -a "$SUMMARY_LOG"
 }
@@ -33,8 +29,8 @@ log_summary() {
 # Activate conda environment
 #log_summary "Activating conda environment: $CONDA_ENV"
 #conda activate $CONDA_ENV
+# ended up activating on run
 
-# Check if python script exists
 if [ ! -f "$PYTHON_SCRIPT" ]; then
     log_summary "Error: Python script not found at $PYTHON_SCRIPT"
     exit 1
@@ -46,13 +42,11 @@ log_summary "PBMC samples (post-genetic demux): doublet rate = $PBMC_DOUBLET_RAT
 log_summary "Other samples (single-sample): doublet rate = $OTHER_DOUBLET_RATE"
 log_summary ""
 
-# Track statistics
 total_samples=0
 processed_samples=0
 skipped_samples=0
 failed_samples=0
 
-# Process each sample directory
 for sample_dir in "$BASE_DIR"/*; do
     # Check if it's a directory
     if [ ! -d "$sample_dir" ]; then
@@ -73,17 +67,14 @@ for sample_dir in "$BASE_DIR"/*; do
         continue
     fi
     
-    # Skip if already processed (remove this block to reprocess)
     if [ -f "$sample_dir/scrublet/SCR.summary.txt" ]; then
         log_summary "Sample $sample_name already processed, skipping..."
         skipped_samples=$((skipped_samples + 1))
         continue
     fi
     
-    # Count current cells
     current_cells=$(wc -l < "$sample_dir/barcodes.tsv")
     
-    # Determine doublet rate based on sample type
     if [[ $sample_name == PBMC* ]]; then
         doublet_rate=$PBMC_DOUBLET_RATE
         sample_type="PBMC (demultiplexed)"
@@ -97,14 +88,11 @@ for sample_dir in "$BASE_DIR"/*; do
     log_summary "  Current cells: $current_cells"
     log_summary "  Expected doublet rate: $doublet_rate"
     
-    # Create output directory
     output_dir="$sample_dir/scrublet"
     mkdir -p "$output_dir"
     
-    # Sample-specific log file in the scrublet directory
     sample_log="$output_dir/scrublet_run_${TIMESTAMP}.log"
     
-    # Log sample info to the sample-specific log
     {
         echo "Scrublet Analysis Log"
         echo "===================="
@@ -118,7 +106,6 @@ for sample_dir in "$BASE_DIR"/*; do
         echo "-------------------"
     } > "$sample_log"
     
-    # Run scrublet and capture output to both sample log and console
     python "$PYTHON_SCRIPT" \
         --counts-matrix "$sample_dir/matrix.mtx" \
         --features "$sample_dir/features.tsv" \
@@ -127,13 +114,11 @@ for sample_dir in "$BASE_DIR"/*; do
         --doublet-rate "$doublet_rate" \
         2>&1 | tee -a "$sample_log"
     
-    # Check if outputs were created and add summary to log
     if [ -f "$output_dir/SCR.barcodes.pass.tsv" ]; then
         log_summary "✓ Successfully processed $sample_name"
         processed_samples=$((processed_samples + 1))
         
-        # Add summary to sample log
-        {
+       {
             echo ""
             echo "-------------------"
             echo "Processing completed successfully"
@@ -144,7 +129,6 @@ for sample_dir in "$BASE_DIR"/*; do
             cat "$output_dir/SCR.summary.txt"
         } >> "$sample_log"
         
-        # Quick stats for summary
         detected_doublets=$(grep "Doublet" "$output_dir/SCR.summary.txt" | awk '{print $2}' || echo "0")
         log_summary "  Detected $detected_doublets potential doublets"
     else
@@ -156,7 +140,6 @@ for sample_dir in "$BASE_DIR"/*; do
     echo "----------------------------------------"
 done
 
-# Generate summary report
 log_summary "Generating summary report..."
 summary_file="$SUMMARY_LOG_DIR/summary_results_${TIMESTAMP}.tsv"
 {
@@ -197,21 +180,14 @@ summary_file="$SUMMARY_LOG_DIR/summary_results_${TIMESTAMP}.tsv"
 
 log_summary "Summary report saved to: $summary_file"
 
-# Final summary
-log_summary ""
-log_summary "Processing Complete!"
-log_summary "==================="
 log_summary "Total samples found: $total_samples"
 log_summary "Successfully processed: $processed_samples"
 log_summary "Skipped: $skipped_samples"
 log_summary "Failed: $failed_samples"
 
-# Display results
-echo ""
 echo "Summary of results:"
 column -t -s $'\t' "$summary_file" | head -20
 
-# Create an index file listing all sample logs
 index_file="$SUMMARY_LOG_DIR/sample_logs_index_${TIMESTAMP}.txt"
 {
     echo "Sample Log Files Index"
