@@ -1,3 +1,6 @@
+.Rhistory
+.Rprofile
+.DS_Store
 results
 resources
 .snakemake
