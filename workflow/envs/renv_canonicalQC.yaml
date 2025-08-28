@@ -1,0 +1,13 @@
+name: renv_canonicalQC
+channels:
+    - conda-forge
+    - defaults
+dependencies:
+    - libxml2
+    - hdf5
+    - glpk
+    - gsl
+    - r-base ==4.3.1
+    - r-recommended
+    - r-tidyverse
+
