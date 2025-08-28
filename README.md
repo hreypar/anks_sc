@@ -1,2 +1,3 @@
 # GSE194315_stellarscope
-Run Stellarscope on AS samples for Bruno
+
+Analysis of AS and HC PBMC samples (single cell RNA-seq)
