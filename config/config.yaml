@@ -16,30 +16,24 @@ samples_metadata:
     sampid_meta: "sra_biosample"
 
 # directory for temps
-#
 tmpdir: "$TMPDIR"
-
-# get fastqs rule
-#
-sra_to_fastq_threads: 8
+tmp: "$TMPDIR"
 
 # reference genome
-#
 star_index: "resources/STAR_GRCh38.d1.vd1_gencode.v38"
 
-# You should parametrize fastq suffix this to match reads per spot
 # 10x protocols
-#
 barcode_mate:
     v1.1: 'R2'
     v2: 'R1'
-    v3: 'R1'
+    v3.1: 'R1'
 
 # this logic is cool because it is based on each sample,
 # not assuming all samples in a dataset have the same chem, etc
 # thanks, Matthew!
 #
 # STARsolo alignment
+# the chems should be like just v1,v2,v3 and in the rule any v1.1 maps to v1 etc
 align_multi_starsolo:
     _default:
         runDirPerm: "All_RWX"
@@ -56,7 +50,7 @@ align_multi_starsolo:
         limitOutSJcollapsed: 5000000
         outFilterMultimapScoreRange: 5
         outFilterMultimapNmax: 500
-        limitBAMsortRAM: 48000000000
+        limitBAMsortRAM: 48000000000 
         soloCellFilter: "EmptyDrops_CR"
     chemistry:
         v1.1:
@@ -74,7 +68,7 @@ align_multi_starsolo:
             soloCBlen: 16
             soloUMIstart: 17
             soloUMIlen: 10
-        v3:
+        v3.1:
             soloCBwhitelist: "resources/whitelist/3M-february-2018.txt"
             soloBarcodeReadLength: 0
             soloCBstart: 1

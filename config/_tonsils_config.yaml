@@ -1,0 +1,159 @@
+tempdir: "$TMPDIR" 
+
+star_index: '/fsx/databases/snakemake_references.version0.2.git/databases/indexes/STAR_GRCh38_2020A_F4HSA_gencode32'
+
+align_multi_starsolo:
+    _default:
+        runDirPerm: "All_RWX"
+        soloType: "CB_UMI_Simple"
+        outSAMunmapped: "Within"
+        soloFeatures: "Gene SJ Velocyto"
+        outSAMattributes: "NH HI AS NM nM MD CR CY UR UY CB UB GX GN sS sQ sM"
+        outSAMtype: "BAM SortedByCoordinate"
+        clipAdapterType: "CellRanger4"
+        outFilterScoreMin: 30
+        soloCBmatchWLtype: "1MM_multi_Nbase_pseudocounts"
+        soloUMIfiltering: "MultiGeneUMI_CR"
+        soloUMIdedup: "1MM_CR"
+        limitOutSJcollapsed: 5000000
+        outFilterMultimapScoreRange: 5
+        outFilterMultimapNmax: 500
+        limitBAMsortRAM: 48000000000
+        soloCellFilter: "EmptyDrops_CR"        
+    chemistry:
+        v2:
+            soloCBwhitelist: "resources/whitelist/737K-august-2016.txt"
+            soloBarcodeReadLength: 0
+            soloCBstart: 1
+            soloCBlen: 16
+            soloUMIstart: 17
+            soloUMIlen: 10            
+        v3:
+            soloCBwhitelist: "resources/whitelist/3M-february-2018.txt"
+            soloBarcodeReadLength: 0
+            soloCBstart: 1
+            soloCBlen: 16
+            soloUMIstart: 17
+            soloUMIlen: 12
+
+barcode_mate:
+    v1: 'R2'
+    v2: 'R1'
+    v3: 'R1'
+
+stellarscope:
+    retro_gtf: "resources/retro.hg38.v1.gtf"
+
+annotate_celltypes_azimuth:
+    filter_threshold: 0.8
+
+remove_doublets: "scrublet"
+
+cellranger:
+    bin: "/efs/software/bin/cellranger"
+
+align_starsolo:
+    cellmix:
+        soloType: "CB_UMI_Simple"
+        soloCBstart: 1
+        soloCBlen: 14
+        soloUMIstart: 15
+        soloUMIlen: 10
+        outSAMunmapped: "Within"
+        outSAMattributes: "NH HI AS NM nM MD CR CY UR UY CB UB GX GN sS sQ sM"
+        outSAMtype: "BAM SortedByCoordinate"
+        clipAdapterType: "CellRanger4"
+        outFilterScoreMin: 30
+        soloCBmatchWLtype: "1MM_multi_Nbase_pseudocounts"
+        soloUMIfiltering: "MultiGeneUMI_CR"
+        soloUMIdedup: "1MM_CR"
+        limitOutSJcollapsed: 5000000
+    pbmc3p:
+        soloType: "CB_UMI_Simple"
+        soloCBstart: 1
+        soloCBlen: 16
+        soloUMIstart: 17
+        soloUMIlen: 12
+        outSAMunmapped: "Within"        
+        outSAMattributes: "NH HI AS NM nM MD CR CY UR UY CB UB GX GN sS sQ sM"
+        outSAMtype: "BAM SortedByCoordinate"
+        clipAdapterType: "CellRanger4"
+        outFilterScoreMin: 30
+        soloCBmatchWLtype: "1MM_multi_Nbase_pseudocounts"
+        soloUMIfiltering: "MultiGeneUMI_CR"
+        soloUMIdedup: "1MM_CR"
+        limitOutSJcollapsed: 5000000
+    pbmc5p:
+        soloType: "CB_UMI_Simple"
+        soloCBstart: 1
+        soloCBlen: 16
+        soloUMIstart: 17
+        soloUMIlen: 10
+        outSAMunmapped: "Within"        
+        outSAMattributes: "NH HI AS NM nM MD CR CY UR UY CB UB GX GN sS sQ sM"
+        outSAMtype: "BAM SortedByCoordinate"
+        clipAdapterType: "CellRanger4"
+        outFilterScoreMin: 30
+        soloCBmatchWLtype: "1MM_multi_Nbase_pseudocounts"
+        soloUMIfiltering: "MultiGeneUMI_CR"
+        soloUMIdedup: "1MM_CR"
+        limitOutSJcollapsed: 5000000
+
+
+
+align_multi_starsolo_test:
+    cellmix:
+        soloType: "CB_UMI_Simple"
+        soloCBstart: 1
+        soloCBlen: 14
+        soloUMIstart: 15
+        soloUMIlen: 10
+        outSAMunmapped: "Within"
+        outSAMattributes: "NH HI AS NM nM MD CR CY UR UY CB UB GX GN sS sQ sM"
+        outSAMtype: "BAM SortedByCoordinate"
+        clipAdapterType: "CellRanger4"
+        outFilterScoreMin: 30
+        soloCBmatchWLtype: "1MM_multi_Nbase_pseudocounts"
+        soloUMIfiltering: "MultiGeneUMI_CR"
+        soloUMIdedup: "1MM_CR"
+        limitOutSJcollapsed: 5000000
+        outFilterMultimapScoreRange: 5
+        outFilterMultimapNmax: 500
+        soloCellFilter: "EmptyDrops_CR"        
+    pbmc3p:
+        soloType: "CB_UMI_Simple"
+        soloCBstart: 1
+        soloCBlen: 16
+        soloUMIstart: 17
+        soloUMIlen: 12
+        outSAMunmapped: "Within"        
+        outSAMattributes: "NH HI AS NM nM MD CR CY UR UY CB UB GX GN sS sQ sM"
+        outSAMtype: "BAM SortedByCoordinate"
+        clipAdapterType: "CellRanger4"
+        outFilterScoreMin: 30
+        soloCBmatchWLtype: "1MM_multi_Nbase_pseudocounts"
+        soloUMIfiltering: "MultiGeneUMI_CR"
+        soloUMIdedup: "1MM_CR"
+        limitOutSJcollapsed: 5000000
+        outFilterMultimapScoreRange: 5
+        outFilterMultimapNmax: 500
+        soloCellFilter: "EmptyDrops_CR"        
+    pbmc5p:
+        soloType: "CB_UMI_Simple"
+        soloCBstart: 1
+        soloCBlen: 16
+        soloUMIstart: 17
+        soloUMIlen: 10
+        outSAMunmapped: "Within"        
+        outSAMattributes: "NH HI AS NM nM MD CR CY UR UY CB UB GX GN sS sQ sM"
+        outSAMtype: "BAM SortedByCoordinate"
+        clipAdapterType: "CellRanger4"
+        outFilterScoreMin: 30
+        soloCBmatchWLtype: "1MM_multi_Nbase_pseudocounts"
+        soloUMIfiltering: "MultiGeneUMI_CR"
+        soloUMIdedup: "1MM_CR"
+        limitOutSJcollapsed: 5000000
+        outFilterMultimapScoreRange: 5
+        outFilterMultimapNmax: 500
+        soloCellFilter: "EmptyDrops_CR"
+
